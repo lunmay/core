@@ -347,6 +347,17 @@ async def test_climate_temperatures(
     state2 = hass.states.get("climate.hallway")
     assert state2.attributes["temperature"] == 20
 
+    with patch(
+        "homeassistant.components.sensibo.coordinator.SensiboClient.async_set_ac_state_property",
+    ) as mock_call:
+        await hass.services.async_call(
+            CLIMATE_DOMAIN,
+            SERVICE_SET_TEMPERATURE,
+            {ATTR_ENTITY_ID: state1.entity_id, ATTR_TEMPERATURE: 20},
+            blocking=True,
+        )
+        assert not mock_call.called
+
     with (
         patch(
             "homeassistant.components.sensibo.coordinator.SensiboClient.async_get_devices_data",
@@ -990,7 +1001,7 @@ async def test_climate_pure_boost(
                 ATTR_ENTITY_ID: state_climate.entity_id,
                 ATTR_INDOOR_INTEGRATION: True,
                 ATTR_OUTDOOR_INTEGRATION: True,
-                ATTR_SENSITIVITY: "Sensitive",
+                ATTR_SENSITIVITY: "sensitive",
             },
             blocking=True,
         )
@@ -1025,7 +1036,7 @@ async def test_climate_pure_boost(
                 ATTR_GEO_INTEGRATION: False,
                 ATTR_INDOOR_INTEGRATION: True,
                 ATTR_OUTDOOR_INTEGRATION: True,
-                ATTR_SENSITIVITY: "Sensitive",
+                ATTR_SENSITIVITY: "sensitive",
             },
             blocking=True,
         )
